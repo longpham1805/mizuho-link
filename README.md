@@ -57,7 +57,7 @@ http://localhost:3000/failure.html?errorCode=TEST-001
 ## ローカル確認
 
 ```bash
-npx --yes serve .
+python3 -m http.server 3000
 ```
 
 ブラウザ確認（deep link を飛ばさない）:
@@ -66,6 +66,43 @@ npx --yes serve .
 - http://localhost:3000/failure.html?errorCode=TEST-001&auto=0
 
 実機では `auto=0` を外し、アプリから上記 URL を `Linking.openURL` で開いてください。
+
+## Deploy lên GitHub Pages
+
+Repo: https://github.com/longpham1805/mizuho-link
+
+### 1. Push code (nếu chưa)
+
+```bash
+git add .
+git commit -m "Add result pages and GitHub Pages deploy"
+git push origin main
+```
+
+### 2. Bật Pages trên GitHub
+
+1. Mở **Settings** → **Pages**
+2. **Source**: chọn **GitHub Actions**
+3. Đợi workflow **Deploy GitHub Pages** chạy xong (tab **Actions**)
+
+Hoặc cách đơn giản không cần Actions:
+
+1. **Settings** → **Pages**
+2. **Source**: **Deploy from a branch**
+3. Branch: `main` / folder: `/ (root)` → **Save**
+
+> Repo cần **public** (hoặc tài khoản có GitHub Pages cho private).
+
+### 3. URL sau khi deploy
+
+Base: `https://longpham1805.github.io/mizuho-link/`
+
+| Màn | URL |
+|-----|-----|
+| Success | https://longpham1805.github.io/mizuho-link/success.html?linkageType=corporate_dc |
+| Failure | https://longpham1805.github.io/mizuho-link/failure.html?errorCode=TEST-001 |
+
+App mở URL này bằng `Linking.openURL(...)`.
 
 ## 今後
 

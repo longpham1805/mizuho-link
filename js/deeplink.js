@@ -1,53 +1,45 @@
 /**
- * Build mizuho:// deep link and return the user to the app.
+ * Return to the Mizuho app via deep link.
  *
- * Contract (N001 ConnectAccount):
- *   Success: mizuho://connect-account/result?status=success&linkageType={type}
- *   Failure: mizuho://connect-account/result?status=failure&errorCode={code}
+ * Fixed links (current test flow):
+ *   Success: mizuho://connect-account/result?status=success&linkageType=corporate_dc
+ *   Failure: mizuho://connect-account/result?status=failure&errorCode=TEST-001
  *
- * Page query params (set by backend when serving HTML):
- *   ?linkageType=corporate_dc   (success)
- *   ?errorCode=APP-MSG-ERR-0001 (failure)
- *   ?auto=0                     (disable auto redirect)
- *   ?delay=1500                 (auto redirect delay in ms)
+ * Optional page query params:
+ *   ?auto=0     disable auto redirect
+ *   ?delay=1500 auto redirect delay (ms)
  */
 (function () {
-  var SCHEME = "mizuho://connect-account/result";
+  var LINKS = {
+    success:
+      "mizuho://connect-account/result?status=success&linkageType=corporate_dc",
+    failure:
+      "mizuho://connect-account/result?status=failure&errorCode=TEST-001",
+  };
   var DEFAULT_DELAY_MS = 1500;
 
   function getParams() {
     return new URLSearchParams(window.location.search);
   }
 
-  function buildDeepLink(status) {
-    var params = getParams();
-    var out = new URLSearchParams();
-    out.set("status", status);
-
-    if (status === "success") {
-      var linkageType = params.get("linkageType");
-      if (linkageType) out.set("linkageType", linkageType);
-    } else {
-      var errorCode = params.get("errorCode");
-      if (errorCode) out.set("errorCode", errorCode);
-    }
-
-    return SCHEME + "?" + out.toString();
-  }
-
   function openDeepLink(url) {
-    // Custom-scheme navigation; iframe/location tricks are unreliable across browsers.
     window.location.href = url;
   }
 
   function init(status) {
-    var deepLink = buildDeepLink(status);
+    var deepLink = LINKS[status] || LINKS.success;
     var params = getParams();
     var button = document.getElementById("return-btn");
     var hint = document.getElementById("auto-hint");
+    var errorCodeEl = document.getElementById("error-code");
     var autoDisabled = params.get("auto") === "0";
     var delay = Number(params.get("delay"));
     if (!Number.isFinite(delay) || delay < 0) delay = DEFAULT_DELAY_MS;
+
+    if (status === "failure" && errorCodeEl) {
+      errorCodeEl.hidden = false;
+      errorCodeEl.textContent = "エラーコード: TEST-001";
+    }
 
     if (button) {
       button.setAttribute("href", deepLink);
@@ -69,5 +61,5 @@
     }
   }
 
-  window.MizuhoDeepLink = { init: init, buildDeepLink: buildDeepLink };
+  window.MizuhoDeepLink = { init: init, links: LINKS };
 })();

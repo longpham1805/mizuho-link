@@ -18,22 +18,23 @@ Mizuho App
 
 | 結果 | 開くページ |
 |------|------------|
-| 成功 | `/success.html?linkageType=corporate_dc` |
-| 失敗 | `/failure.html?errorCode=APP-MSG-ERR-0001` |
+| 成功 | `/success.html` |
+| 失敗 | `/failure.html` |
 
 例（ローカル）:
 
 ```
-http://localhost:3000/success.html?linkageType=corporate_dc
-http://localhost:3000/failure.html?errorCode=TEST-001
+http://localhost:3000/success.html
+http://localhost:3000/failure.html
 ```
 
-## アプリへ返す Deep link
+ページを開くと、固定 deep link でアプリに戻ります。
+## アプリへ返す Deep link（固定）
 
 | 結果 | Deep link |
 |------|-----------|
-| 成功 | `mizuho://connect-account/result?status=success&linkageType={type}` |
-| 失敗 | `mizuho://connect-account/result?status=failure&errorCode={code}` |
+| 成功 | `mizuho://connect-account/result?status=success&linkageType=corporate_dc` |
+| 失敗 | `mizuho://connect-account/result?status=failure&errorCode=TEST-001` |
 
 - ボタン「アプリに戻る」で発火
 - 約 1.5 秒後に自動でも発火（`auto=0` で無効化可）
@@ -62,8 +63,8 @@ python3 -m http.server 3000
 
 ブラウザ確認（deep link を飛ばさない）:
 
-- http://localhost:3000/success.html?linkageType=corporate_dc&auto=0
-- http://localhost:3000/failure.html?errorCode=TEST-001&auto=0
+- http://localhost:3000/success.html?auto=0
+- http://localhost:3000/failure.html?auto=0
 
 実機では `auto=0` を外し、アプリから上記 URL を `Linking.openURL` で開いてください。
 
@@ -99,8 +100,8 @@ Base: `https://longpham1805.github.io/mizuho-link/`
 
 | Màn | URL |
 |-----|-----|
-| Success | https://longpham1805.github.io/mizuho-link/success.html?linkageType=corporate_dc |
-| Failure | https://longpham1805.github.io/mizuho-link/failure.html?errorCode=TEST-001 |
+| Success | https://longpham1805.github.io/mizuho-link/success.html |
+| Failure | https://longpham1805.github.io/mizuho-link/failure.html |
 
 App mở URL này bằng `Linking.openURL(...)`.
 

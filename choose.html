@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>JIS&amp;T 結果選択</title>
+    <link rel="stylesheet" href="./css/result.css" />
+  </head>
+  <body>
+    <main class="card" role="main">
+      <h1 class="title">結果画面を選択</h1>
+      <p class="description">
+        ログイン済みです。Success または Failure を選んでください。
+      </p>
+      <div class="actions">
+        <a class="btn btn--primary" href="./success.html">Success（成功）</a>
+        <a class="btn btn--danger" href="./failure.html">Failure（失敗）</a>
+        <button id="logout-btn" type="button" class="btn btn--ghost">ログアウト</button>
+      </div>
+    </main>
+
+    <script src="./js/auth.js"></script>
+    <script>
+      if (!MizuhoAuth.requireAuth()) {
+        /* redirected */
+      } else {
+        document.getElementById("logout-btn").addEventListener("click", function () {
+          MizuhoAuth.logout();
+          location.href = "login.html";
+        });
+      }
+    </script>
+  </body>
+</html>

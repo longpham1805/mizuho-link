@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex,nofollow" />
+    <title>JIS&amp;T ログイン</title>
+    <link rel="stylesheet" href="./css/result.css" />
+  </head>
+  <body>
+    <main class="card card--form" role="main">
+      <h1 class="title">ログイン</h1>
+      <p class="description">
+        JIS&amp;T 連携テスト用ログイン画面です。<br />
+        アカウント / パスワード: <code>admin</code>
+      </p>
+
+      <form id="login-form" class="form" novalidate>
+        <label class="field">
+          <span class="field__label">アカウント</span>
+          <input
+            id="username"
+            name="username"
+            type="text"
+            autocomplete="username"
+            value="admin"
+            required
+          />
+        </label>
+        <label class="field">
+          <span class="field__label">パスワード</span>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            value="admin"
+            required
+          />
+        </label>
+        <p id="login-error" class="form-error" hidden>アカウントまたはパスワードが正しくありません。</p>
+        <button type="submit" class="btn btn--primary btn--block">ログイン</button>
+      </form>
+    </main>
+
+    <script src="./js/auth.js"></script>
+    <script>
+      (function () {
+        var params = new URLSearchParams(location.search);
+        var next = params.get("next") || "choose.html";
+
+        if (MizuhoAuth.isLoggedIn()) {
+          location.replace(next);
+          return;
+        }
+
+        var form = document.getElementById("login-form");
+        var errorEl = document.getElementById("login-error");
+
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          var username = document.getElementById("username").value.trim();
+          var password = document.getElementById("password").value;
+
+          if (MizuhoAuth.login(username, password)) {
+            location.href = next;
+            return;
+          }
+
+          errorEl.hidden = false;
+        });
+      })();
+    </script>
+  </body>
+</html>

@@ -23,9 +23,12 @@
       </div>
       <p id="auto-hint" class="hint" hidden></p>
     </main>
+    <script src="./js/auth.js"></script>
     <script src="./js/deeplink.js"></script>
     <script>
-      MizuhoDeepLink.init("success");
+      if (MizuhoAuth.requireAuth()) {
+        MizuhoDeepLink.init("success");
+      }
     </script>
   </body>
 </html>

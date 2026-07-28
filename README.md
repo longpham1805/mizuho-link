@@ -1,34 +1,42 @@
 # mizuho-link
 
-JIS&T 連携の **結果画面のみ**（暫定フロー）。  
-認証画面はまだ使わず、アプリから直接 success / failure を開き、ボタンでアプリへ戻します。
+JIS&T 連携のテスト用 Web フロー。  
+ログイン後に Success / Failure を選び、アプリへ deep link で戻します。
 
-## 暫定フロー（認証スキップ）
+## フロー
 
 ```
 Mizuho App
-  └─ Linking.openURL( success.html or failure.html )
-        └─ ブラウザで結果画面表示
-              └─ 「アプリに戻る」 / 自動遷移
-                    └─ mizuho://connect-account/result?...
-                          └─ App の ConnectAccountResultScreen
+  └─ Linking.openURL( login.html )
+        └─ ログイン（admin / admin）
+              └─ choose.html で Success / Failure を選択
+                    └─ 「アプリに戻る」 / 自動遷移
+                          └─ mizuho://connect-account/result?...
 ```
+
+## ログイン
+
+| 項目 | 値 |
+|------|-----|
+| アカウント | `admin` |
+| パスワード | `admin` |
+
+未ログインで `success.html` / `failure.html` / `choose.html` を開くと `login.html` へリダイレクトされます。
 
 ## App が開く URL
 
-| 結果 | 開くページ |
-|------|------------|
-| 成功 | `/success.html` |
-| 失敗 | `/failure.html` |
-
-例（ローカル）:
+入口:
 
 ```
-http://localhost:3000/success.html
-http://localhost:3000/failure.html
+https://longpham1805.github.io/mizuho-link/login.html
 ```
 
-ページを開くと、固定 deep link でアプリに戻ります。
+ローカル:
+
+```
+http://localhost:3000/login.html
+```
+
 ## アプリへ返す Deep link（固定）
 
 | 結果 | Deep link |
@@ -43,8 +51,11 @@ http://localhost:3000/failure.html
 
 | ファイル | 用途 |
 |----------|------|
-| `success.html` | 成功画面 |
-| `failure.html` | 失敗画面 |
+| `login.html` | ログイン画面 |
+| `choose.html` | Success / Failure 選択 |
+| `success.html` | 成功画面（要ログイン） |
+| `failure.html` | 失敗画面（要ログイン） |
+| `js/auth.js` | ログイン判定 |
 | `js/deeplink.js` | deep link 組み立て・遷移 |
 | `css/result.css` | 共通スタイル |
 
@@ -61,12 +72,13 @@ http://localhost:3000/failure.html
 python3 -m http.server 3000
 ```
 
-ブラウザ確認（deep link を飛ばさない）:
+ブラウザ確認:
 
-- http://localhost:3000/success.html?auto=0
-- http://localhost:3000/failure.html?auto=0
+1. http://localhost:3000/login.html → `admin` / `admin`
+2. choose で Success / Failure を選択
+3. 結果画面で deep link を飛ばさない場合は `?auto=0` を付与
 
-実機では `auto=0` を外し、アプリから上記 URL を `Linking.openURL` で開いてください。
+実機ではアプリから `login.html` を `Linking.openURL` で開いてください。
 
 ## Deploy lên GitHub Pages
 
@@ -100,10 +112,11 @@ Base: `https://longpham1805.github.io/mizuho-link/`
 
 | Màn | URL |
 |-----|-----|
+| Login (入口) | https://longpham1805.github.io/mizuho-link/login.html |
 | Success | https://longpham1805.github.io/mizuho-link/success.html |
 | Failure | https://longpham1805.github.io/mizuho-link/failure.html |
 
-App mở URL này bằng `Linking.openURL(...)`.
+App mở **login.html** bằng `Linking.openURL(...)`.
 
 ## 今後
 

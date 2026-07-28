@@ -139,3 +139,88 @@ body {
 .hint[hidden] {
   display: none;
 }
+
+.card--form {
+  text-align: left;
+}
+
+.card--form .title,
+.card--form .description {
+  text-align: center;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.field input {
+  appearance: none;
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font: inherit;
+  font-size: 15px;
+  color: var(--text);
+  background: #fff;
+}
+
+.field input:focus {
+  outline: 2px solid rgba(37, 99, 235, 0.35);
+  border-color: var(--btn);
+}
+
+.form-error {
+  margin: 0;
+  font-size: 13px;
+  color: var(--failure);
+}
+
+.form-error[hidden] {
+  display: none;
+}
+
+.btn--block {
+  width: 100%;
+}
+
+.btn--danger {
+  background: var(--failure);
+  color: #fff;
+}
+
+.btn--danger:hover {
+  background: #dc2626;
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid #d1d5db;
+}
+
+.btn--ghost:hover {
+  background: #f9fafb;
+}
+
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.95em;
+  background: #f3f4f6;
+  padding: 1px 6px;
+  border-radius: 4px;
+}

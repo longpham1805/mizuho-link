@@ -9,27 +9,11 @@
   </head>
   <body>
     <main class="card" role="main">
-      <div class="icon icon--failure" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 6L6 18M6 6l12 12" />
-        </svg>
-      </div>
-      <h1 class="title">JIS&amp;T API連携失敗</h1>
-      <p class="description">
-        JIS&amp;T（確定拠出年金）とのAPI連携認証に失敗しました。アプリに戻って再度お試しください。
-      </p>
-      <p id="error-code" class="error-code" hidden></p>
-      <div class="actions">
-        <a id="return-btn" class="btn btn--primary" href="#">アプリに戻る</a>
-      </div>
-      <p id="auto-hint" class="hint" hidden></p>
+      <p class="description">アプリに戻っています…</p>
     </main>
-    <script src="./js/auth.js"></script>
     <script src="./js/deeplink.js"></script>
     <script>
-      if (MizuhoAuth.requireAuth()) {
-        MizuhoDeepLink.init("failure");
-      }
+      MizuhoDeepLink.redirect("failure");
     </script>
   </body>
 </html>

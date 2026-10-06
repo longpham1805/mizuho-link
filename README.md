@@ -1,17 +1,19 @@
 # mizuho-link
 
-JIS&T 連携のテスト用 Web フロー。  
-ログイン後に Success / Failure を選び、アプリへ deep link で戻します。
+JIS&T 連携テスト用 Web。  
+ASWebAuthenticationSession (iOS) / Custom Tabs (Android) 向けに、**結果画面は出さず** 成功・失敗時すぐアプリへ redirect します。エラー表示は native（N018）側です。
 
 ## フロー
 
 ```
 Mizuho App
-  └─ Linking.openURL( login.html )
-        └─ ログイン（admin / admin）
-              └─ choose.html で Success / Failure を選択
-                    └─ 「アプリに戻る」 / 自動遷移
-                          └─ mizuho://connect-account/result?...
+  └─ ASWebAuthenticationSession / Custom Tabs
+        └─ login.html
+              ├─ 許可する（admin / admin）
+              │     └─ mizuho://connect-account/result?status=success&linkageType=corporate_dc
+              └─ 許可しない
+                    └─ mizuho://connect-account/result?status=failure&errorCode=TEST-001
+                          └─ App が callback URL を受け取り、N018 等で表示
 ```
 
 ## ログイン
@@ -21,11 +23,11 @@ Mizuho App
 | アカウント | `admin` |
 | パスワード | `admin` |
 
-未ログインで `success.html` / `failure.html` / `choose.html` を開くと `login.html` へリダイレクトされます。
+- **許可する** + 正しい認証情報 → 成功 deep link（即 redirect）
+- **許可しない** → 失敗 deep link（即 redirect）
+- 認証情報が違う場合は Web 上にエラーを出し、アプリへは戻しません（再入力用）
 
 ## App が開く URL
-
-入口:
 
 ```
 https://longpham1805.github.io/mizuho-link/login.html
@@ -44,27 +46,19 @@ http://localhost:3000/login.html
 | 成功 | `mizuho://connect-account/result?status=success&linkageType=corporate_dc` |
 | 失敗 | `mizuho://connect-account/result?status=failure&errorCode=TEST-001` |
 
-- ボタン「アプリに戻る」で発火
-- 約 1.5 秒後に自動でも発火（`auto=0` で無効化可）
+`success.html` / `failure.html` を直接開いた場合も、同じ URL へ即 redirect します。
 
 ## ファイル
 
 | ファイル | 用途 |
 |----------|------|
-| `login.html` | ログイン画面 |
-| `choose.html` | Success / Failure 選択 |
-| `success.html` | 成功画面（要ログイン） |
-| `failure.html` | 失敗画面（要ログイン） |
+| `login.html` | 認証スタブ（入口） |
+| `choose.html` | テスト用。Success / Failure を即アプリへ返す |
+| `success.html` | 即 success deep link |
+| `failure.html` | 即 failure deep link |
 | `js/auth.js` | ログイン判定 |
-| `js/deeplink.js` | deep link 組み立て・遷移 |
+| `js/deeplink.js` | deep link redirect |
 | `css/result.css` | 共通スタイル |
-
-## オプションクエリ
-
-| パラメータ | 説明 |
-|------------|------|
-| `auto=0` | 自動でアプリへ戻らない（ボタンのみ） |
-| `delay=3000` | 自動遷移までの待ち時間（ms、既定 1500） |
 
 ## ローカル確認
 
@@ -72,37 +66,28 @@ http://localhost:3000/login.html
 python3 -m http.server 3000
 ```
 
-ブラウザ確認:
+1. http://localhost:3000/login.html
+2. `admin` / `admin` → 許可する → `mizuho://...status=success...`
+3. 許可しない → `mizuho://...status=failure&errorCode=TEST-001`
 
-1. http://localhost:3000/login.html → `admin` / `admin`
-2. choose で Success / Failure を選択
-3. 結果画面で deep link を飛ばさない場合は `?auto=0` を付与
-
-実機ではアプリから `login.html` を `Linking.openURL` で開いてください。
+実機では Custom Tabs / ASWebAuthenticationSession の callback に上記 scheme を設定してください。
 
 ## Deploy lên GitHub Pages
 
 Repo: https://github.com/longpham1805/mizuho-link
 
-### 1. Push code (nếu chưa)
+### 1. Push code
 
 ```bash
 git add .
-git commit -m "Add result pages and GitHub Pages deploy"
+git commit -m "Redirect success/failure straight back to the app"
 git push origin main
 ```
 
-### 2. Bật Pages trên GitHub
-
-1. Mở **Settings** → **Pages**
-2. **Source**: chọn **GitHub Actions**
-3. Đợi workflow **Deploy GitHub Pages** chạy xong (tab **Actions**)
-
-Hoặc cách đơn giản không cần Actions:
+### 2. Bật Pages
 
 1. **Settings** → **Pages**
-2. **Source**: **Deploy from a branch**
-3. Branch: `main` / folder: `/ (root)` → **Save**
+2. **Source**: **GitHub Actions** または **Deploy from a branch** (`main` / `/ (root)`)
 
 > Repo cần **public** (hoặc tài khoản có GitHub Pages cho private).
 
@@ -113,11 +98,5 @@ Base: `https://longpham1805.github.io/mizuho-link/`
 | Màn | URL |
 |-----|-----|
 | Login (入口) | https://longpham1805.github.io/mizuho-link/login.html |
-| Success | https://longpham1805.github.io/mizuho-link/success.html |
-| Failure | https://longpham1805.github.io/mizuho-link/failure.html |
-
-App mở **login.html** bằng `Linking.openURL(...)`.
-
-## 今後
-
-JIS&T 認証を挟む本番フローに戻すときは、認証完了後のコールバックから本ページを配信する想定です。現状はその手前の往復確認用です。
+| Success (即 redirect) | https://longpham1805.github.io/mizuho-link/success.html |
+| Failure (即 redirect) | https://longpham1805.github.io/mizuho-link/failure.html |

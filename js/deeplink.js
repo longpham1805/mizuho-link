@@ -18,7 +18,9 @@
   }
 
   function redirect(status) {
-    window.location.replace(urlFor(status));
+    var url = urlFor(status);
+    // href (not replace) is what ASWebAuthenticationSession intercepts.
+    window.location.href = url;
   }
 
   window.MizuhoDeepLink = { redirect: redirect, urlFor: urlFor, links: LINKS };
